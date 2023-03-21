@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>{{ product.name }}</h1>
+    <div class="d-flex">
+        <img src="/files/{{ product.photo_file }}" alt="{{ product.photo_file }}" class="img-thumbnail" width="500">
+        <table class="p-2">
+            <tr class="pb-0">
+                <td>Количество:</td>
+                <td class='pl-5'>{{ product.count }}</td>
+            </tr>
+            <tr class="pb-0">
+                <td>Цена:</td>
+                <td class='pl-5'>{{ product.price }} ₽</td>
+            </tr>
+            <tr class="pb-0">
+                <td>Страна-производитель:</td>
+                <td class='pl-5'>{{ product.country }}</td>
+            </tr>
+            <tr class="pb-0">
+                <td>Год выпуска:</td>
+                <td class='pl-5'>{{ product.year }}</td>
+            </tr>
+            <tr class="pb-0">
+                <td>Модель:</td>
+                <td class='pl-5'>{{ product.category }}</td>
+            </tr>
+        </table>
+        <div>
+            {% if user.is_authenticated %}
+                <a href="#" onclick="toCart(this,{{ product.pk }})"><img src="../files/cart.svg" alt="cart"></a>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        toCart = async (target, pk) => {
+            const res = await fetch(`/to_cart/${pk}`).then(res => res.json());
+            const message = document.createElement('div');
+            if (res.count) {
+                message.innerHTML = `Товар добавлен в корзину. Общее количество товаров в корзине: ${res.count}`;
+            } else {
+                message.innerHTML = 'Больше нельзя добавить';
+            }
+            target.parentElement.append(message);
+            setTimeout(() => message.remove(), 1000);
+
+        }
+    </script>
+{% endblock %}
